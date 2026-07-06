@@ -33,7 +33,7 @@
       <h1 class="text-[2rem] sm:text-5xl font-bold tracking-tight">
         <span class="bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent">Gemini Voice Studio</span>
       </h1>
-      <p class="text-slate-400 mt-3 text-base sm:text-lg max-w-2xl mx-auto">Sintetize voz natural com o Gemini 2.5 Flash TTS. Escolha entre 19 vozes pré-construídas.</p>
+      <p class="text-slate-400 mt-3 text-base sm:text-lg max-w-2xl mx-auto">Sintetize voz natural com o Gemini 2.5 Flash TTS. Escolha entre 19 vozes pré-construídas e guie as emoções da narração.</p>
     </header>
 
     <!-- API Key -->
@@ -51,31 +51,62 @@
 
     <!-- Main Card -->
     <main class="bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-[2rem] shadow-2xl shadow-black/30 overflow-hidden">
-      <!-- Text Input -->
-      <div class="p-6 sm:p-8">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center gap-2.5">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-violet-400"><path d="M17.5 22h.5a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v2.5"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><circle cx="8" cy="16" r="2"/><path d="M10 16V8a2 2 0 0 1 2-2h3.5"/></svg>
-            <h2 class="text-base font-semibold text-slate-200">Texto para sintetizar</h2>
+      
+      <!-- Seção Dividida: Texto de Entrada e Instruções de Narração -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 border-b border-slate-800/80">
+        
+        <!-- Coluna Esquerda: Texto para Sintetizar (7/12) -->
+        <div class="p-6 sm:p-8 lg:col-span-7 lg:border-r border-slate-800/80">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2.5">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-violet-400"><path d="M17.5 22h.5a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v2.5"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><circle cx="8" cy="16" r="2"/><path d="M10 16V8a2 2 0 0 1 2-2h3.5"/></svg>
+              <h2 class="text-base font-semibold text-slate-200">Texto para sintetizar</h2>
+            </div>
+            <span class="text-xs text-slate-500">Português (Brasil)</span>
           </div>
-          <span class="text-xs text-slate-500 hidden sm:block">Português (Brasil)</span>
-        </div>
-        <div class="relative group">
-          <textarea id="textInput" rows="6" placeholder="Digite ou cole seu texto aqui..." class="w-full bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3.5 text-[15px] leading-relaxed placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 transition resize-none">Olá! Esta é uma demonstração do Gemini Voice Studio. Experimente diferentes vozes, com timbres femininos, masculinos e infantis, para criar áudios naturais em português do Brasil. O texto pode ser longo: o sistema divide automaticamente em partes e une tudo em um único MP3.</textarea>
-          <div class="absolute bottom-3 right-3 opacity-0 group-focus-within:opacity-100 transition">
-            <div class="bg-slate-800/90 backdrop-blur px-2.5 py-1 rounded-lg text-[11px] text-slate-400 border border-slate-700">⌘+Enter para gerar</div>
+          <div class="relative group">
+            <textarea id="textInput" rows="7" placeholder="Digite ou cole seu texto aqui..." class="w-full bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3.5 text-[15px] leading-relaxed placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 transition resize-none">Olá! Esta é uma demonstração do Gemini Voice Studio. Experimente diferentes vozes, com timbres femininos, masculinos e infantis, para criar áudios naturais em português do Brasil. O texto pode ser longo: o sistema divide automaticamente em partes e une tudo em um único MP3.</textarea>
+            <div class="absolute bottom-3 right-3 opacity-0 group-focus-within:opacity-100 transition">
+              <div class="bg-slate-800/90 backdrop-blur px-2.5 py-1 rounded-lg text-[11px] text-slate-400 border border-slate-700">⌘+Enter para gerar</div>
+            </div>
+          </div>
+          <div class="flex justify-between items-center mt-3">
+            <p class="text-xs text-slate-500">Textos longos são divididos automaticamente (máx. ~800 caracteres por parte).</p>
+            <span id="charCount" class="text-xs mono text-slate-500">0 caracteres</span>
           </div>
         </div>
-        <div class="flex justify-between items-center mt-3">
-          <p class="text-xs text-slate-500">Textos longos são divididos automaticamente (máx. ~800 caracteres por parte).</p>
-          <span id="charCount" class="text-xs mono text-slate-500">0 caracteres</span>
+
+        <!-- Coluna Direita: Instruções de Narração (5/12) -->
+        <div class="p-6 sm:p-8 lg:col-span-5 bg-slate-950/20">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2.5">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-400"><path d="m12 3-1.912 5.886H3.877l4.981 3.62L6.945 18.39 12 14.77l5.055 3.62-1.913-5.884 4.981-3.62h-6.211L12 3z"/></svg>
+              <h2 class="text-base font-semibold text-slate-200">Instruções de Narração</h2>
+            </div>
+            <button id="clearInstructions" class="text-xs text-slate-500 hover:text-slate-300 transition">Limpar</button>
+          </div>
+          
+          <div class="space-y-3">
+            <textarea id="narrationInstructions" rows="3" placeholder="Ex: Narre de forma calma, pausada, com um tom acolhedor e leve sorriso na voz..." class="w-full bg-slate-950/60 border border-slate-800 rounded-xl px-4 py-3 text-[14px] leading-relaxed placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition resize-none"></textarea>
+            
+            <div>
+              <p class="text-xs text-slate-400 mb-2 font-medium">Estilos rápidos (clique para aplicar):</p>
+              <div class="flex flex-wrap gap-1.5" id="presetContainer">
+                <!-- Presets renderizados via JavaScript -->
+              </div>
+            </div>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-4 leading-relaxed">
+            As diretrizes controlam a emoção, tom, ritmo e comportamento sonoro gerados pelo motor de IA do Gemini.
+          </p>
         </div>
+
       </div>
 
       <!-- Voice Config -->
       <div class="border-t border-slate-800/80 bg-slate-950/40 p-6 sm:p-8">
         <div class="flex items-center gap-2.5 mb-5">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><path d="M12.22 2h-.44a2 2 0 0 0-2 2.18l.07 1.03a5.5 5.5 0 0 1-1.72 1.33l-.97-.45A2 2 0 0 0 4.35 7.5l.22.97a5.5 0 0 1 0 2.65l-.22.98a2 2 0 0 0 1.81 2.4l.97-.44c.56.43 1.15.78 1.78 1.05l-.07 1.03a2 2 0 0 0 2 2.18h.44a2 2 0 0 0 2-2.18l-.07-1.03c.63-.27 1.22-.62 1.78-1.05l.97.44a2 2 0 0 0 1.81-2.4l-.22-.98a5.5 5.5 0 0 1 0-2.65l.22-.97a2 2 0 0 0-1.81-2.4l-.97.45c-.5-.55-1.08-1-1.72-1.33l.07-1.03A2 2 0 0 0 12.22 2z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><path d="M12.22 2h-.44a2 2 0 0 0-2 2.18l.07 1.03a5.5 5.5 0 0 1-1.72 1.33l-.97-.45A2 2 0 0 0 4.35 7.5l.22.97a5.5 0 0 1 0 2.65l-.22.98a2 2 0 0 0 1.81 2.4l.97-.44c.56.43 1.15.78 1.78 1.05l-.07 1.03a2 2 0 0 0 2 2.18h.44a2 2 0 0 0 2-2.18l-.07-1.03c.63-.27 1.22-.62 1.78-1.05l.97.44a2 2 0 0 0 1.81-2.4l-.22-.98a5.5 0 0 1 0-2.65l.22-.97a2 2 0 0 0-1.81-2.4l-.97.45c-.5-.55-1.08-1-1.72-1.33l.07-1.03A2 2 0 0 0 12.22 2z"/><circle cx="12" cy="12" r="3"/></svg>
           <h3 class="text-base font-semibold text-slate-200">Configuração de Voz</h3>
         </div>
 
@@ -171,9 +202,22 @@
   <script>
   const VOICES = [{id:'Kore',name:'Kore',gender:'Feminina',type:'Jovem'}, {id:'Aoede',name:'Aoede',gender:'Feminina',type:'Adulta'}, {id:'Leda',name:'Leda',gender:'Feminina',type:'Adulta'}, {id:'Callirrhoe',name:'Callirrhoe',gender:'Feminina',type:'Adulta'}, {id:'Despina',name:'Despina',gender:'Feminina',type:'Jovem'}, {id:'Erinome',name:'Erinome',gender:'Feminina',type:'Adulta'}, {id:'Pulcherrima',name:'Pulcherrima',gender:'Feminina',type:'Adulta'}, {id:'Vindemiatrix',name:'Vindemiatrix',gender:'Feminina',type:'Madura'}, {id:'Fenrir',name:'Fenrir',gender:'Masculina',type:'Grave'}, {id:'Orus',name:'Orus',gender:'Masculina',type:'Forte'}, {id:'Charon',name:'Charon',gender:'Masculina',type:'Maduro'}, {id:'Enceladus',name:'Enceladus',gender:'Masculina',type:'Grave'}, {id:'Iapetus',name:'Iapetus',gender:'Masculina',type:'Maduro'}, {id:'Algieba',name:'Algieba',gender:'Masculina',type:'Adulta'}, {id:'Algenib',name:'Algenib',gender:'Masculina',type:'Adulta'}, {id:'Puck',name:'Puck',gender:'Infantil',type:'Criança/Neutra'}, {id:'Zephyr',name:'Zephyr',gender:'Infantil',type:'Criança/Neutra'}, {id:'Autonoe',name:'Autonoe',gender:'Infantil',type:'Criança/Neutra'}, {id:'Schedar',name:'Schedar',gender:'Infantil',type:'Jovem'}];
 
+  // Presets para as instruções de narração
+  const PRESETS = [
+    { label: '😊 Alegre', text: 'Narre com entusiasmo, energia alta, tom amigável e um sorriso nítido na voz.' },
+    { label: '🤫 Sussurrado', text: 'Fale de maneira muito suave, quase em um sussurro confidente, criando um clima de intimidade e mistério.' },
+    { label: '🎙️ Profissional', text: 'Narre com tom formal, postura corporativa, clareza cirúrgica e ritmo constante de apresentação.' },
+    { label: '🧘 Calmo', text: 'Narre de forma serena, tranquila e pausada. Ideal para meditação ou leitura relaxante.' },
+    { label: '🎭 Dramático', text: 'Narre com forte carga emocional, pausas expressivas para criar suspense e variações de tom dramáticas.' },
+    { label: '📚 Didático', text: 'Narre com clareza explicativa, ritmo moderado, ideal para audiolivros técnicos ou tutoriais.' }
+  ];
+
   const apiKeyInput = document.getElementById('apiKey');
   const saveKeyBtn = document.getElementById('saveKey');
   const textInput = document.getElementById('textInput');
+  const narrationInstructions = document.getElementById('narrationInstructions');
+  const clearInstructionsBtn = document.getElementById('clearInstructions');
+  const presetContainer = document.getElementById('presetContainer');
   const charCount = document.getElementById('charCount');
   const filterButtons = document.getElementById('filterButtons');
   const voiceGrid = document.getElementById('voiceGrid');
@@ -213,9 +257,24 @@
     if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') handleGenerate();
   });
 
+  clearInstructionsBtn.addEventListener('click', () => {
+    narrationInstructions.value = '';
+  });
+
   function updateCharCount() {
     charCount.textContent = `${textInput.value.length} caracteres`;
   }
+
+  // Render Presets
+  PRESETS.forEach(preset => {
+    const btn = document.createElement('button');
+    btn.textContent = preset.label;
+    btn.className = 'text-xs bg-slate-900 border border-slate-800 text-slate-300 px-2.5 py-1 rounded-lg hover:bg-slate-800 hover:border-slate-700 transition active:scale-[0.95]';
+    btn.onclick = () => {
+      narrationInstructions.value = preset.text;
+    };
+    presetContainer.appendChild(btn);
+  });
 
   // Filters
   const filters = ['Todas', 'Feminina', 'Masculina', 'Infantil'];
@@ -377,13 +436,39 @@
     const text = textInput.value.trim();
     if (!text) { showError('Digite algum texto para sintetizar.'); return; }
 
+    const instructionText = narrationInstructions.value.trim();
+
     setGenerating(true);
     try {
       const chunks = chunkText(text, 800);
       const pcmParts = [];
       for (let i=0; i<chunks.length; i++) {
         statusText.textContent = `Sintetizando áudio (${i+1}/${chunks.length})...`;
-        const payload = { contents:[{parts:[{text:chunks[i]}]}], generationConfig:{ responseModalities:["AUDIO"], speechConfig:{ voiceConfig:{ prebuiltVoiceConfig:{ voiceName: selectedVoice }}}}};
+        
+        // Mapeia o payload com a adição opcional de instruções de narração como System Instruction
+        const payload = { 
+          contents: [{ parts: [{ text: chunks[i] }] }], 
+          generationConfig: { 
+            responseModalities: ["AUDIO"], 
+            speechConfig: { 
+              voiceConfig: { 
+                prebuiltVoiceConfig: { 
+                  voiceName: selectedVoice 
+                } 
+              } 
+            } 
+          }
+        };
+
+        // Aplica as instruções caso tenham sido fornecidas pelo usuário
+        if (instructionText) {
+          payload.systemInstruction = {
+            parts: [{ 
+              text: `Aja como o locutor/dublador do texto solicitado. Siga rigorosamente estas instruções de narração (emoção, tom, estilo e pausas): ${instructionText}.` 
+            }]
+          };
+        }
+
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${encodeURIComponent(apiKey)}`;
         const res = await fetchWithRetry(url, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
         const data = await res.json();
