@@ -1,496 +1,809 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Gemini Voice Studio</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gemini Voice Studio - Gerador de Áudio Ultra-Realista</title>
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Lucide Icons para interface profissional -->
+  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    * { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
-    .mono { font-family: 'JetBrains Mono', monospace; }
-    body { background: #020617; }
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: #0f172a; }
-    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #0b0f19;
+    }
+    .glass-effect {
+      background: rgba(17, 24, 39, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .glow-indigo {
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
+    }
+    /* Estilização da barra de rolagem */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.5);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(99, 102, 241, 0.3);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(99, 102, 241, 0.5);
+    }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen antialiased selection:bg-indigo-500/30 selection:text-indigo-200">
-  <div class="max-w-5xl mx-auto px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
-    <header class="mb-8 text-center">
-      <div class="inline-flex items-center gap-3 mb-4">
-        <div class="relative">
-          <div class="absolute -inset-1 bg-gradient-to-r from-indigo-600 to-violet-600 rounded-2xl blur-xl opacity-50"></div>
-          <div class="relative bg-slate-900 p-3 rounded-2xl border border-slate-800">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
-          </div>
+<body class="text-slate-100 min-h-screen flex flex-col justify-between">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800/80 glass-effect sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 bg-gradient-to-tr from-indigo-500 to-violet-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
+          <i data-lucide="mic" class="w-5 h-5 text-white"></i>
+        </div>
+        <div>
+          <span class="text-lg font-bold bg-gradient-to-r from-white via-slate-200 to-indigo-400 bg-clip-text text-transparent">Gemini Voice Studio</span>
+          <span class="text-xs block text-indigo-400 font-medium">Text-To-Speech Profissional</span>
         </div>
       </div>
-      <h1 class="text-[2rem] sm:text-5xl font-bold tracking-tight">
-        <span class="bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent">Gemini Voice Studio</span>
-      </h1>
-      <p class="text-slate-400 mt-3 text-base sm:text-lg max-w-2xl mx-auto">Sintetize voz natural com o Gemini 2.5 Flash. Escolha entre 19 vozes pré-construídas e guie as emoções da narração.</p>
-    </header>
-
-    <div class="mb-6 bg-slate-900/70 backdrop-blur-xl border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-2xl shadow-black/20">
-      <label class="flex items-center gap-2 text-sm font-medium text-slate-300 mb-2.5">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18v3c0 .6.4 1 1 1h4v-3h3v-3h2l1.4-1.4a6.5 6.5 0 1 0-4-4Z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/></svg>
-        Chave da API Gemini
-      </label>
-      <div class="flex gap-2">
-        <input id="apiKey" type="password" placeholder="Cole sua chave da API aqui (AIza...)" class="flex-1 bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-sm placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition"/>
-        <button id="saveKey" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-sm font-medium transition active:scale-[0.98]">Salvar</button>
-      </div>
-      <p class="text-xs text-slate-500 mt-2.5">Salva apenas no seu navegador (localStorage). Compatível com o modelo multimodal <span class="mono text-slate-400">gemini-2.5-flash</span>.</p>
-    </div>
-
-    <main class="bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-[2rem] shadow-2xl shadow-black/30 overflow-hidden">
       
-      <div class="grid grid-cols-1 lg:grid-cols-12 border-b border-slate-800/80">
-        
-        <div class="p-6 sm:p-8 lg:col-span-7 lg:border-r border-slate-800/80">
-          <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center gap-2.5">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-violet-400"><path d="M17.5 22h.5a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v2.5"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><circle cx="8" cy="16" r="2"/><path d="M10 16V8a2 2 0 0 1 2-2h3.5"/></svg>
-              <h2 class="text-base font-semibold text-slate-200">Texto para sintetizar</h2>
-            </div>
-            <span class="text-xs text-slate-500">Português (Brasil)</span>
-          </div>
-          <div class="relative group">
-            <textarea id="textInput" rows="7" placeholder="Digite ou cole seu texto aqui..." class="w-full bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3.5 text-[15px] leading-relaxed placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 transition resize-none">Olá! Esta é uma demonstração do Gemini Voice Studio. Experimente diferentes vozes, com timbres femininos, masculinos e infantis, para criar áudios naturais em português do Brasil. O texto pode ser longo: o sistema divide automaticamente em partes e une tudo em um único MP3.</textarea>
-            <div class="absolute bottom-3 right-3 opacity-0 group-focus-within:opacity-100 transition">
-              <div class="bg-slate-800/90 backdrop-blur px-2.5 py-1 rounded-lg text-[11px] text-slate-400 border border-slate-700"> do teclado: ⌘+Enter para gerar</div>
-            </div>
-          </div>
-          <div class="flex justify-between items-center mt-3">
-            <p class="text-xs text-slate-500">Textos longos são divididos automaticamente (máx. ~800 caracteres por parte).</p>
-            <span id="charCount" class="text-xs mono text-slate-500">0 caracteres</span>
+      <!-- Chave de API Configuração Rápida -->
+      <div class="flex items-center space-x-4">
+        <div class="relative hidden md:block">
+          <input type="password" id="apiKeyInput" placeholder="Chave de API Gemini (opcional)..." 
+            class="w-64 bg-slate-900/90 border border-slate-700/80 rounded-lg py-1.5 pl-3 pr-10 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all placeholder:text-slate-500 text-slate-300" />
+          <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+            <i data-lucide="key" class="h-3.5 w-3.5 text-slate-500"></i>
           </div>
         </div>
-
-        <div class="p-6 sm:p-8 lg:col-span-5 bg-slate-950/20">
-          <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center gap-2.5">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-400"><path d="m12 3-1.912 5.886H3.877l4.981 3.62L6.945 18.39 12 14.77l5.055 3.62-1.913-5.884 4.981-3.62h-6.211L12 3z"/></svg>
-              <h2 class="text-base font-semibold text-slate-200">Instruções de Narração</h2>
-            </div>
-            <button id="clearInstructions" class="text-xs text-slate-500 hover:text-slate-300 transition">Limpar</button>
-          </div>
-          
-          <div class="space-y-3">
-            <textarea id="narrationInstructions" rows="3" placeholder="Ex: Narre de forma calma, pausada, com um tom acolhedor e leve sorriso na voz..." class="w-full bg-slate-950/60 border border-slate-800 rounded-xl px-4 py-3 text-[14px] leading-relaxed placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition resize-none"></textarea>
-            
-            <div>
-              <p class="text-xs text-slate-400 mb-2 font-medium">Estilos rápidos (clique para aplicar):</p>
-              <div class="flex flex-wrap gap-1.5" id="presetContainer">
-                </div>
-            </div>
-          </div>
-          <p class="text-[11px] text-slate-500 mt-4 leading-relaxed">
-            As diretrizes ajudam a calibrar o tom emocional e ritmo do áudio final requisitado ao modelo.
-          </p>
-        </div>
-
+        <button onclick="toggleSettingsModal()" class="p-2 hover:bg-slate-800/80 rounded-lg text-slate-400 hover:text-white transition">
+          <i data-lucide="settings" class="w-5 h-5"></i>
+        </button>
       </div>
+    </div>
+  </header>
 
-      <div class="border-t border-slate-800/80 bg-slate-950/40 p-6 sm:p-8">
-        <div class="flex items-center gap-2.5 mb-5">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><path d="M12.22 2h-.44a2 2 0 0 0-2 2.18l.07 1.03a5.5 5.5 0 0 1-1.72 1.33l-.97-.45A2 2 0 0 0 4.35 7.5l.22.97a5.5 0 0 1 0 2.65l-.22.98a2 2 0 0 0 1.81 2.4l.97-.44c.56.43 1.15.78 1.78 1.05l-.07 1.03a2 2 0 0 0 2 2.18h.44a2 2 0 0 0 2-2.18l-.07-1.03c.63-.27 1.22-.62 1.78-1.05l.97.44a2 2 0 0 0 1.81-2.4l-.22-.98a5.5 0 0 1 0-2.65l.22-.97a2 2 0 0 0-1.81-2.4l-.97.45c-.5-.55-1.08-1-1.72-1.33l.07-1.03A2 2 0 0 0 12.22 2z"/><circle cx="12" cy="12" r="3"/></svg>
-          <h3 class="text-base font-semibold text-slate-200">Configuração de Voz</h3>
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
+    
+    <!-- Painel Esquerdo: Configuração da Voz e Estilo -->
+    <section class="lg:col-span-5 space-y-6">
+      
+      <!-- Box 1: Seleção de Voz -->
+      <div class="glass-effect rounded-2xl p-6 glow-indigo">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-sm font-semibold text-indigo-400 uppercase tracking-wider flex items-center gap-2">
+            <i data-lucide="user-check" class="w-4 h-4"></i>
+            1. Perfil de Voz
+          </h2>
+          <span class="px-2 py-0.5 text-[10px] bg-indigo-500/10 text-indigo-300 rounded border border-indigo-500/20 font-medium">Estúdio</span>
         </div>
 
-        <div id="filterButtons" class="flex flex-wrap gap-2 mb-4"></div>
-
-        <div id="voiceGrid" class="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5"></div>
-        
-        <div class="mt-4 flex items-center gap-2 text-xs text-slate-500">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-          <span>Voz selecionada: <strong id="selectedVoiceLabel" class="text-slate-300 font-medium">Kore</strong></span>
-        </div>
-      </div>
-
-      <div class="border-t border-slate-800/80 p-6 sm:p-8 bg-gradient-to-b from-slate-900/40 to-slate-950/60">
-        <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-          <button id="generateBtn" class="relative group w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 rounded-2xl font-semibold text-white shadow-lg shadow-indigo-950/50 transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 -skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
-            <svg id="generateIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
-            <svg id="generateSpinner" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-spin hidden"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-            <span id="generateText">Gerar Áudio</span>
+        <!-- Categorias de Voz -->
+        <div class="grid grid-cols-3 gap-2 mb-4">
+          <button onclick="filterVoices('feminina')" id="btn-fem" class="py-2 px-3 rounded-lg text-xs font-semibold bg-indigo-600 text-white border border-indigo-500 transition-all flex flex-col items-center gap-1">
+            <i data-lucide="user-round" class="w-4 h-4 text-pink-300"></i>
+            Femininas
           </button>
+          <button onclick="filterVoices('masculina')" id="btn-masc" class="py-2 px-3 rounded-lg text-xs font-semibold bg-slate-800 text-slate-400 border border-slate-700/50 hover:bg-slate-700/50 transition-all flex flex-col items-center gap-1">
+            <i data-lucide="user" class="w-4 h-4 text-blue-300"></i>
+            Masculinas
+          </button>
+          <button onclick="filterVoices('infantil')" id="btn-inf" class="py-2 px-3 rounded-lg text-xs font-semibold bg-slate-800 text-slate-400 border border-slate-700/50 hover:bg-slate-700/50 transition-all flex flex-col items-center gap-1">
+            <i data-lucide="baby" class="w-4 h-4 text-amber-300"></i>
+            Infantis/Jovens
+          </button>
+        </div>
 
-          <div id="statusBox" class="hidden w-full sm:w-auto flex items-center gap-2.5 text-sm">
-            <div class="flex items-center gap-2 px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="animate-spin text-indigo-400"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-              <span id="statusText" class="text-slate-300">Processando...</span>
-            </div>
+        <!-- Lista de Vozes Dinâmica -->
+        <div class="space-y-2 max-h-[220px] overflow-y-auto pr-1" id="voiceListContainer">
+          <!-- Gerado dinamicamente via JS -->
+        </div>
+
+        <!-- Botão de Testar Voz Selecionada -->
+        <button onclick="testSelectedVoice()" id="btnTestVoice" class="w-full mt-4 bg-slate-800/80 hover:bg-indigo-600 hover:text-white text-slate-300 font-medium text-xs py-2.5 px-4 rounded-lg border border-slate-700/80 hover:border-indigo-500 transition duration-200 flex items-center justify-center gap-2">
+          <i data-lucide="volume-2" class="w-4 h-4"></i>
+          Testar Voz Selecionada
+        </button>
+      </div>
+
+      <!-- Box 2: Instruções de Narração e Emoções -->
+      <div class="glass-effect rounded-2xl p-6">
+        <h2 class="text-sm font-semibold text-indigo-400 uppercase tracking-wider flex items-center gap-2 mb-4">
+          <i data-lucide="wand-2" class="w-4 h-4"></i>
+          2. Direção de Arte & Emoção
+        </h2>
+
+        <!-- Presets de Tom -->
+        <label class="text-xs text-slate-400 font-medium mb-2 block">Selecione uma emoção rápida:</label>
+        <div class="grid grid-cols-2 gap-2 mb-4">
+          <button type="button" onclick="setEmotionPreset('animado')" class="preset-btn px-3 py-1.5 text-left text-xs bg-slate-800/50 border border-slate-700 rounded-lg hover:border-slate-500 transition flex items-center gap-2">
+            <span>🔥</span> Animado & Enérgico
+          </button>
+          <button type="button" onclick="setEmotionPreset('sussurrado')" class="preset-btn px-3 py-1.5 text-left text-xs bg-slate-800/50 border border-slate-700 rounded-lg hover:border-slate-500 transition flex items-center gap-2">
+            <span>🤫</span> Intimista / Suave
+          </button>
+          <button type="button" onclick="setEmotionPreset('noticiario')" class="preset-btn px-3 py-1.5 text-left text-xs bg-slate-800/50 border border-slate-700 rounded-lg hover:border-slate-500 transition flex items-center gap-2">
+            <span>📰</span> Noticiário / Formal
+          </button>
+          <button type="button" onclick="setEmotionPreset('dramatico')" class="preset-btn px-3 py-1.5 text-left text-xs bg-slate-800/50 border border-slate-700 rounded-lg hover:border-slate-500 transition flex items-center gap-2">
+            <span>🎭</span> Dramático / Tenso
+          </button>
+        </div>
+
+        <!-- Instruções customizadas -->
+        <label class="text-xs text-slate-400 font-medium mb-1.5 block">Ou digite instruções personalizadas:</label>
+        <textarea id="narrationInstructions" placeholder="Ex: Fale pausadamente, de forma misteriosa e com tom mais grave, respirando entre as frases..." 
+          class="w-full h-20 bg-slate-900/80 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all placeholder:text-slate-600 resize-none"></textarea>
+      </div>
+
+    </section>
+
+    <!-- Painel Direito: Editor de Texto e Processador de Áudio -->
+    <section class="lg:col-span-7 space-y-6">
+      
+      <!-- Editor de Texto -->
+      <div class="glass-effect rounded-2xl p-6 flex flex-col h-full min-h-[450px]">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-sm font-semibold text-indigo-400 uppercase tracking-wider flex items-center gap-2">
+            <i data-lucide="file-text" class="w-4 h-4"></i>
+            3. Roteiro para Narração
+          </h2>
+          <div class="flex items-center space-x-2">
+            <span id="charCounter" class="text-xs text-slate-500 bg-slate-900 px-2 py-1 rounded">0 caracteres</span>
+            <button onclick="clearText()" class="p-1.5 hover:bg-slate-800 text-slate-400 hover:text-rose-400 rounded-lg transition" title="Limpar roteiro">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
           </div>
         </div>
 
-        <div id="audioSection" class="hidden mt-6">
-          <div class="bg-slate-950/70 border border-slate-800 rounded-2xl p-4 sm:p-5">
-            <div class="flex flex-col sm:flex-row gap-4 items-center">
-              <div class="flex items-center gap-3 w-full sm:w-auto">
-                <button id="playBtn" class="flex-shrink-0 w-12 h-12 grid place-items-center bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-xl transition active:scale-95">
-                  <svg id="playIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-                  <svg id="pauseIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="hidden"><rect width="4" height="16" x="6" y="4"/><rect width="4" height="16" x="14" y="4"/></svg>
-                </button>
-                <div class="min-w-0 flex-1 sm:hidden">
-                  <p class="text-sm font-medium text-slate-200 truncate">Áudio gerado</p>
-                  <p class="text-xs text-slate-500">MP3 • 24kHz • Mono</p>
-                </div>
-              </div>
-              
-              <div class="flex-1 w-full">
-                <audio id="audioPlayer" class="w-full h-10 [&::-webkit-media-controls-panel]:bg-slate-900 [&::-webkit-media-controls-panel]:rounded-lg" controls></audio>
-              </div>
-
-              <button id="downloadBtn" class="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-xl text-sm font-medium transition active:scale-[0.98]">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-                Baixar MP3
-              </button>
-            </div>
-          </div>
+        <div class="flex-grow relative mb-4">
+          <textarea id="scriptText" placeholder="Escreva ou cole aqui seu roteiro. Sem limite de caracteres! O sistema fatiará o texto automaticamente garantindo uma narração contínua e natural..." 
+            class="w-full h-64 bg-slate-950/60 border border-slate-800/80 rounded-xl p-4 text-sm text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all placeholder:text-slate-600 resize-none leading-relaxed"
+            oninput="updateCharCount()"></textarea>
         </div>
 
-        <div id="errorBox" class="hidden mt-4 p-4 bg-red-950/40 border border-red-900/60 rounded-2xl">
-          <div class="flex gap-3">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-red-400 flex-shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
-            <div>
-              <p class="text-sm font-medium text-red-200">Erro ao gerar áudio</p>
-              <p id="errorText" class="text-sm text-red-300/80 mt-1"></p>
+        <!-- Barra de Ação Principal -->
+        <div class="flex flex-col sm:flex-row items-center gap-3">
+          <button onclick="generateSpeech()" id="btnGenerate" class="w-full sm:w-auto flex-grow bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 text-white font-semibold py-3 px-6 rounded-xl transition duration-200 shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2">
+            <i data-lucide="sparkles" class="w-5 h-5"></i>
+            Gerar Narração Completa
+          </button>
+        </div>
+      </div>
+
+      <!-- Reprodutor de Áudio e Ondas (Escondido por padrão, aparece ao gerar) -->
+      <div id="audioOutputCard" class="glass-effect rounded-2xl p-6 hidden">
+        <h2 class="text-sm font-semibold text-emerald-400 uppercase tracking-wider flex items-center gap-2 mb-4">
+          <i data-lucide="play-circle" class="w-4 h-4"></i>
+          Áudio Gerado com Sucesso
+        </h2>
+
+        <div class="bg-slate-950/80 border border-slate-800/80 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+          <!-- Player nativo ocultado para desenhar o player customizado -->
+          <audio id="audioPlayer" class="hidden" controls></audio>
+          
+          <div class="flex items-center space-x-3 w-full md:w-auto">
+            <button id="customPlayBtn" onclick="togglePlay()" class="w-12 h-12 bg-indigo-500 hover:bg-indigo-600 text-white rounded-full flex items-center justify-center shadow-lg transition">
+              <i data-lucide="play" id="playIcon" class="w-6 h-6 fill-white"></i>
+            </button>
+            <div class="flex-grow md:flex-grow-0">
+              <p class="text-xs font-semibold text-slate-300" id="audioFileName">narracao_gemini.wav</p>
+              <p class="text-[10px] text-slate-500" id="audioDuration">00:00</p>
             </div>
+          </div>
+
+          <!-- Canvas para Ondas Reais -->
+          <div class="w-full md:w-64 h-12 bg-slate-900/60 rounded-lg overflow-hidden flex items-center justify-center relative">
+            <canvas id="waveformCanvas" class="w-full h-full"></canvas>
+          </div>
+
+          <!-- Ações de Download -->
+          <div class="flex items-center space-x-2 w-full md:w-auto">
+            <a id="downloadBtn" href="#" download="narracao_gemini.wav" class="w-full md:w-auto px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg transition flex items-center justify-center gap-2">
+              <i data-lucide="download" class="w-4 h-4"></i>
+              Baixar .WAV (Alta Definição)
+            </a>
           </div>
         </div>
       </div>
-    </main>
 
-    <footer class="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
-      <div class="flex items-center justify-center gap-2 text-xs text-slate-500 bg-slate-900/40 border border-slate-800/50 rounded-xl py-2.5 px-3">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-emerald-400"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        <span>Vozes Estáveis do Gemini 2.5</span>
-      </div>
-      <div class="flex items-center justify-center gap-2 text-xs text-slate-500 bg-slate-900/40 border border-slate-800/50 rounded-xl py-2.5 px-3">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-emerald-400"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        <span>Conversão nativa para MP3</span>
-      </div>
-      <div class="flex items-center justify-center gap-2 text-xs text-slate-500 bg-slate-900/40 border border-slate-800/50 rounded-xl py-2.5 px-3">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-emerald-400"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        <span>Processamento 100% no navegador</span>
-      </div>
-    </footer>
+    </section>
 
-    <p class="text-center text-[11px] text-slate-600 mt-8">Feito para GitHub Pages • Sem build • Tailwind CDN</p>
+  </main>
+
+  <!-- Histórico de Produção (Rodapé Técnico) -->
+  <footer class="border-t border-slate-900 glass-effect py-6 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="text-xs text-slate-500">
+        Desenvolvido com o modelo <code class="text-indigo-400 font-mono">gemini-2.5-flash-preview-tts</code> para processamento de voz estúdio nativo.
+      </div>
+      <div class="flex items-center space-x-6 text-xs text-slate-400">
+        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Servidor Local Integrado</span>
+        <a href="https://github.com" target="_blank" class="hover:text-white transition flex items-center gap-1"><i data-lucide="github" class="w-4 h-4"></i> Pronto para GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Modal de Configurações (Chave API) -->
+  <div id="settingsModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold text-slate-200 flex items-center gap-2">
+          <i data-lucide="shield-check" class="text-indigo-400 w-5 h-5"></i>
+          Configuração da Chave API
+        </h3>
+        <button onclick="toggleSettingsModal()" class="text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+        O sistema tenta utilizar a chave de API embutida fornecida pelo ambiente sandbox do Gemini. Se preferir rodar localmente ou hospedar no GitHub Pages de forma independente, configure sua própria API Key do Google AI Studio abaixo:
+      </p>
+      <input type="password" id="modalApiKeyInput" placeholder="AIzaSy..." 
+        class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none text-slate-200 placeholder:text-slate-600 mb-4" />
+      
+      <div class="flex items-center space-x-2">
+        <button onclick="saveApiKey()" class="flex-grow bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg text-xs transition">
+          Salvar Chave
+        </button>
+        <button onclick="clearApiKey()" class="px-4 py-2 border border-slate-800 hover:bg-slate-800 text-slate-400 rounded-lg text-xs transition">
+          Limpar
+        </button>
+      </div>
+    </div>
   </div>
 
+  <!-- Central de Toasts de Notificação Customizados -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
+
+  <!-- Loading Overlay de Processamento de Texto Longo -->
+  <div id="loadingOverlay" class="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex flex-col items-center justify-center hidden">
+    <div class="bg-slate-900 border border-slate-800/80 p-8 rounded-2xl w-full max-w-sm text-center shadow-2xl flex flex-col items-center">
+      <div class="relative w-16 h-16 mb-4">
+        <div class="absolute inset-0 border-4 border-indigo-500/20 rounded-full"></div>
+        <div class="absolute inset-0 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+        <i data-lucide="audio-lines" class="w-6 h-6 text-indigo-400 absolute inset-0 m-auto animate-pulse"></i>
+      </div>
+      <h3 class="text-slate-200 font-bold mb-1" id="loadingTitle">Gerando Áudio</h3>
+      <p class="text-xs text-slate-400 mb-4" id="loadingText">Por favor, aguarde enquanto processamos...</p>
+      
+      <!-- Progress Bar -->
+      <div class="w-full bg-slate-950 rounded-full h-1.5 overflow-hidden">
+        <div id="loadingProgress" class="bg-indigo-500 h-1.5 w-0 transition-all duration-300"></div>
+      </div>
+      <span id="loadingPercent" class="text-[10px] text-slate-500 mt-1.5 block">0%</span>
+    </div>
+  </div>
+
+  <!-- Core JavaScript Logic -->
   <script>
-  const VOICES = [{id:'Kore',name:'Kore',gender:'Feminina',type:'Jovem'}, {id:'Aoede',name:'Aoede',gender:'Feminina',type:'Adulta'}, {id:'Leda',name:'Leda',gender:'Feminina',type:'Adulta'}, {id:'Callirrhoe',name:'Callirrhoe',gender:'Feminina',type:'Adulta'}, {id:'Despina',name:'Despina',gender:'Feminina',type:'Jovem'}, {id:'Erinome',name:'Erinome',gender:'Feminina',type:'Adulta'}, {id:'Pulcherrima',name:'Pulcherrima',gender:'Feminina',type:'Adulta'}, {id:'Vindemiatrix',name:'Vindemiatrix',gender:'Feminina',type:'Madura'}, {id:'Fenrir',name:'Fenrir',gender:'Masculina',type:'Grave'}, {id:'Orus',name:'Orus',gender:'Masculina',type:'Forte'}, {id:'Charon',name:'Charon',gender:'Masculina',type:'Maduro'}, {id:'Enceladus',name:'Enceladus',gender:'Masculina',type:'Grave'}, {id:'Iapetus',name:'Iapetus',gender:'Masculina',type:'Maduro'}, {id:'Algieba',name:'Algieba',gender:'Masculina',type:'Adulta'}, {id:'Algenib',name:'Algenib',gender:'Masculina',type:'Adulta'}, {id:'Puck',name:'Puck',gender:'Infantil',type:'Criança/Neutra'}, {id:'Zephyr',name:'Zephyr',gender:'Infantil',type:'Criança/Neutra'}, {id:'Autonoe',name:'Autonoe',gender:'Infantil',type:'Criança/Neutra'}, {id:'Schedar',name:'Schedar',gender:'Infantil',type:'Jovem'}];
+    // Configurações Globais fornecidas pelo ambiente
+    const fallbackApiKey = "";
+    
+    // Lista de Vozes do Ecossistema Gemini
+    const voices = [
+      { id: "Aoede", name: "Aoede", gender: "feminina", desc: "Expressiva, melodiosa (Ideal para audiolivros)" },
+      { id: "Leda", name: "Leda", gender: "feminina", desc: "Clara, formal e de alta definição" },
+      { id: "Callirrhoe", name: "Callirrhoe", gender: "feminina", desc: "Suave, acolhedora (Excelente para meditação)" },
+      { id: "Despina", name: "Despina", gender: "feminina", desc: "Enérgica e brilhante (Excelente para anúncios)" },
+      { id: "Sadachbia", name: "Sadachbia", gender: "feminina", desc: "Calma, calorosa e compreensiva" },
+      
+      { id: "Puck", name: "Puck", gender: "masculina", desc: "Carismático e ótimo para narrativas" },
+      { id: "Charon", name: "Charon", gender: "masculina", desc: "Grave, sério, cinematográfico" },
+      { id: "Kore", name: "Kore", gender: "masculina", desc: "Equilibrado, natural (Ideal para tutoriais)" },
+      { id: "Fenrir", name: "Fenrir", gender: "masculina", desc: "Robusto, dinâmico e marcante" },
+      { id: "Orus", name: "Orus", gender: "masculina", desc: "Comercial, encorpado e profissional" },
+      
+      { id: "Zephyr", name: "Zephyr", gender: "infantil", desc: "Jovem, alegre e super expressivo" },
+      { id: "Autonoe", name: "Autonoe", gender: "infantil", desc: "Voz jovem brilhante e divertida" }
+    ];
 
-  const PRESETS = [
-    { label: '😊 Alegre', text: 'Narre com entusiasmo, energia alta, tom amigável e um sorriso nítido na voz.' },
-    { label: '🤫 Sussurrado', text: 'Fale de maneira muito suave, quase em um sussurro confidente, criando um clima de intimidade e mistério.' },
-    { label: '🎙️ Profissional', text: 'Narre com tom formal, postura corporativa, clareza cirúrgica e ritmo constante de apresentação.' },
-    { label: '🧘 Calmo', text: 'Narre de forma serena, tranquila e pausada. Ideal para meditação ou leitura relaxante.' },
-    { label: '🎭 Dramático', text: 'Narre com forte carga emocional, pausas expressivas para criar suspense e variações de tom dramáticas.' },
-    { label: '📚 Didático', text: 'Narre com clareza explicativa, ritmo moderado, ideal para audiolivros técnicos ou tutoriais.' }
-  ];
+    let currentFilter = 'feminina';
+    let selectedVoiceId = 'Aoede';
+    let audioContext = null;
+    let audioBuffer = null;
+    let canvasAnimationId = null;
 
-  const apiKeyInput = document.getElementById('apiKey');
-  const saveKeyBtn = document.getElementById('saveKey');
-  const textInput = document.getElementById('textInput');
-  const narrationInstructions = document.getElementById('narrationInstructions');
-  const clearInstructionsBtn = document.getElementById('clearInstructions');
-  const presetContainer = document.getElementById('presetContainer');
-  const charCount = document.getElementById('charCount');
-  const filterButtons = document.getElementById('filterButtons');
-  const voiceGrid = document.getElementById('voiceGrid');
-  const selectedVoiceLabel = document.getElementById('selectedVoiceLabel');
-  const generateBtn = document.getElementById('generateBtn');
-  const generateIcon = document.getElementById('generateIcon');
-  const generateSpinner = document.getElementById('generateSpinner');
-  const generateText = document.getElementById('generateText');
-  const statusBox = document.getElementById('statusBox');
-  const statusText = document.getElementById('statusText');
-  const audioSection = document.getElementById('audioSection');
-  const audioPlayer = document.getElementById('audioPlayer');
-  const playBtn = document.getElementById('playBtn');
-  const playIcon = document.getElementById('playIcon');
-  const pauseIcon = document.getElementById('pauseIcon');
-  const downloadBtn = document.getElementById('downloadBtn');
-  const errorBox = document.getElementById('errorBox');
-  const errorText = document.getElementById('errorText');
-
-  let selectedVoice = 'Kore';
-  let selectedFilter = 'Todas';
-  let isGenerating = false;
-  let currentMp3Blob = null;
-
-  apiKeyInput.value = localStorage.getItem('gemini_api_key') || '';
-  updateCharCount();
-
-  saveKeyBtn.addEventListener('click', () => {
-    localStorage.setItem('gemini_api_key', apiKeyInput.value.trim());
-    saveKeyBtn.textContent = 'Salvo!';
-    setTimeout(() => saveKeyBtn.textContent = 'Salvar', 1500);
-  });
-
-  textInput.addEventListener('input', updateCharCount);
-  textInput.addEventListener('keydown', (e) => {
-    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') handleGenerate();
-  });
-
-  clearInstructionsBtn.addEventListener('click', () => {
-    narrationInstructions.value = '';
-  });
-
-  function updateCharCount() {
-    charCount.textContent = `${textInput.value.length} caracteres`;
-  }
-
-  PRESETS.forEach(preset => {
-    const btn = document.createElement('button');
-    btn.textContent = preset.label;
-    btn.className = 'text-xs bg-slate-900 border border-slate-800 text-slate-300 px-2.5 py-1 rounded-lg hover:bg-slate-800 hover:border-slate-700 transition active:scale-[0.95]';
-    btn.onclick = () => { narrationInstructions.value = preset.text; };
-    presetContainer.appendChild(btn);
-  });
-
-  const filters = ['Todas', 'Feminina', 'Masculina', 'Infantil'];
-  filters.forEach(f => {
-    const btn = document.createElement('button');
-    btn.textContent = f;
-    btn.className = `px-3.5 py-1.5 rounded-xl text-xs font-medium border transition ${f===selectedFilter ? 'bg-indigo-600 border-indigo-500 text-white' : 'bg-slate-900 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-slate-200'}`;
-    btn.onclick = () => { selectedFilter = f; renderFilters(); renderVoices(); };
-    filterButtons.appendChild(btn);
-  });
-
-  function renderFilters() {
-    [...filterButtons.children].forEach((btn, i) => {
-      const f = filters[i];
-      btn.className = `px-3.5 py-1.5 rounded-xl text-xs font-medium border transition ${f===selectedFilter ? 'bg-indigo-600 border-indigo-500 text-white' : 'bg-slate-900 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-slate-200'}`;
-    });
-  }
-
-  function renderVoices() {
-    voiceGrid.innerHTML = '';
-    const list = VOICES.filter(v => selectedFilter === 'Todas' || v.gender === selectedFilter);
-    list.forEach(v => {
-      const btn = document.createElement('button');
-      const active = v.id === selectedVoice;
-      btn.className = `group relative text-left p-3.5 rounded-2xl border transition-all ${active ? 'bg-indigo-600/20 border-indigo-500/50 ring-1 ring-indigo-500/30' : 'bg-slate-900/60 border-slate-800 hover:bg-slate-800/60 hover:border-slate-700'}`;
-      btn.innerHTML = `
-        <div class="flex items-start justify-between gap-2">
-          <div>
-            <div class="font-medium text-[14px] ${active ? 'text-indigo-200' : 'text-slate-200'}">${v.name}</div>
-            <div class="text-[11px] mt-1 ${active ? 'text-indigo-300/70' : 'text-slate-500'}">${v.gender}</div>
-          </div>
-          <span class="text-[10px] px-2 py-1 rounded-lg ${active ? 'bg-indigo-500/30 text-indigo-200 border border-indigo-500/30' : 'bg-slate-800 text-slate-400 border border-slate-700/50'}">${v.type}</span>
-        </div>
-      `;
-      btn.onclick = () => { selectedVoice = v.id; selectedVoiceLabel.textContent = v.name; renderVoices(); };
-      voiceGrid.appendChild(btn);
-    });
-  }
-  renderVoices();
-
-  function chunkText(str, maxLength=800) {
-    const chunks = [];
-    let i = 0;
-    while (i < str.length) {
-      let end = Math.min(i + maxLength, str.length);
-      if (end < str.length) {
-        const slice = str.slice(i, end);
-        const lastPunct = Math.max(slice.lastIndexOf('. '), slice.lastIndexOf('! '), slice.lastIndexOf('? '), slice.lastIndexOf('\n'), slice.lastIndexOf('; '));
-        if (lastPunct > maxLength * 0.4) end = i + lastPunct + 1;
-        else {
-          const lastSpace = slice.lastIndexOf(' ');
-          if (lastSpace > maxLength*0.6) end = i + lastSpace;
-        }
+    // Inicialização da UI ao Carregar
+    window.onload = function() {
+      lucide.createIcons();
+      filterVoices('feminina'); // Filtro padrão
+      
+      // Carrega chave salva do localStorage se houver
+      const savedKey = localStorage.getItem('gemini_custom_apikey');
+      if (savedKey) {
+        document.getElementById('apiKeyInput').value = savedKey;
+        document.getElementById('modalApiKeyInput').value = savedKey;
       }
-      const chunk = str.slice(i, end).trim();
-      if (chunk) chunks.push(chunk);
-      i = end;
-    }
-    return chunks;
-  }
+    };
 
-  async function fetchWithRetry(url, options, maxRetries=3) {
-    const delays=[1500, 3000, 6000];
-    for (let attempt=0; attempt<=maxRetries; attempt++) {
-      try {
-        const res = await fetch(url, options);
-        if (res.ok) return res;
-        if (res.status===429 || res.status>=500) {
-          if (attempt===maxRetries) throw new Error(`Erro ${res.status}`);
-          await new Promise(r=>setTimeout(r, delays[attempt]));
-          continue;
+    // Filtros de Vozes
+    function filterVoices(gender) {
+      currentFilter = gender;
+      
+      // Atualizar botões
+      const btns = {
+        feminina: document.getElementById('btn-fem'),
+        masculina: document.getElementById('btn-masc'),
+        infantil: document.getElementById('btn-inf')
+      };
+      
+      Object.keys(btns).forEach(key => {
+        if (key === gender) {
+          btns[key].className = "py-2 px-3 rounded-lg text-xs font-semibold bg-indigo-600 text-white border border-indigo-500 transition-all flex flex-col items-center gap-1";
+        } else {
+          btns[key].className = "py-2 px-3 rounded-lg text-xs font-semibold bg-slate-800 text-slate-400 border border-slate-700/50 hover:bg-slate-700/50 transition-all flex flex-col items-center gap-1";
         }
-        const txt = await res.text();
-        throw new Error(`HTTP ${res.status}: ${txt.slice(0,200)}`);
-      } catch (e) {
-        if (attempt===maxRetries) throw e;
-        await new Promise(r=>setTimeout(r, delays[attempt]));
-      }
+      });
+
+      renderVoices();
     }
-  }
 
-  function base64ToUint8Array(base64) {
-    const binary = atob(base64);
-    const bytes = new Uint8Array(binary.length);
-    for (let i=0; i<binary.length; i++) bytes[i] = binary.charCodeAt(i);
-    return bytes;
-  }
-
-  function pcmToWav(pcmData, sampleRate=24000) {
-    const buffer = new ArrayBuffer(44 + pcmData.length);
-    const view = new DataView(buffer);
-    const writeStr = (o,s)=>{ for(let i=0;i<s.length;i++) view.setUint8(o+i, s.charCodeAt(i)); };
-    writeStr(0,'RIFF'); view.setUint32(4,36+pcmData.length,true); writeStr(8,'WAVE');
-    writeStr(12,'fmt '); view.setUint32(16,16,true); view.setUint16(20,1,true); view.setUint16(22,1,true);
-    view.setUint32(24,sampleRate,true); view.setUint32(28,sampleRate*2,true); view.setUint16(32,2,true); view.setUint16(34,16,true);
-    writeStr(36,'data'); view.setUint32(40, pcmData.length, true);
-    for (let i=0;i<pcmData.length;i++) view.setUint8(44+i, pcmData[i]);
-    return new Blob([view], {type:'audio/wav'});
-  }
-
-  let lameLoaded = false;
-  function loadLame() {
-    if (lameLoaded) return Promise.resolve();
-    return new Promise((resolve, reject) => {
-      const s = document.createElement('script');
-      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.min.js';
-      s.onload = () => { lameLoaded = true; resolve(); };
-      s.onerror = reject;
-      document.head.appendChild(s);
-    });
-  }
-
-  async function convertWavToMp3(wavBlob) {
-    await loadLame();
-    const buffer = await wavBlob.arrayBuffer();
-    const pcm16 = new Int16Array(buffer, 44);
-    const mp3encoder = new lamejs.Mp3Encoder(1, 24000, 128);
-    const blockSize = 1152;
-    const mp3Data = [];
-    for (let i=0; i<pcm16.length; i+=blockSize) {
-      const chunk = pcm16.subarray(i, i+blockSize);
-      const mp3buf = mp3encoder.encodeBuffer(chunk);
-      if (mp3buf.length>0) mp3Data.push(new Uint8Array(mp3buf));
-    }
-    const end = mp3encoder.flush();
-    if (end.length>0) mp3Data.push(new Uint8Array(end));
-    return new Blob(mp3Data, {type:'audio/mpeg'});
-  }
-
-  function setGenerating(state) {
-    isGenerating = state;
-    generateBtn.disabled = state;
-    generateIcon.classList.toggle('hidden', state);
-    generateSpinner.classList.toggle('hidden', !state);
-    generateText.textContent = state ? 'Gerando...' : 'Gerar Áudio';
-    statusBox.classList.toggle('hidden', !state);
-  }
-
-  function showError(msg) {
-    errorText.textContent = msg;
-    errorBox.classList.remove('hidden');
-  }
-  function hideError() { errorBox.classList.add('hidden'); }
-
-  function hideAudio() {
-    audioSection.classList.add('hidden');
-    audioPlayer.pause();
-    audioPlayer.src = '';
-  }
-
-  generateBtn.addEventListener('click', handleGenerate);
-
-  async function handleGenerate() {
-    hideError(); hideAudio();
-    const apiKey = apiKeyInput.value.trim() || localStorage.getItem('gemini_api_key') || '';
-    if (!apiKey) { showError('Por favor, insira sua chave de API do Gemini.'); return; }
-    localStorage.setItem('gemini_api_key', apiKey);
-    const text = textInput.value.trim();
-    if (!text) { showError('Digite algum texto para sintetizar.'); return; }
-
-    const instructionText = narrationInstructions.value.trim();
-
-    setGenerating(true);
-    try {
-      const chunks = chunkText(text, 800);
-      const pcmParts = [];
-      for (let i=0; i<chunks.length; i++) {
-        statusText.textContent = `Sintetizando áudio (${i+1}/${chunks.length})...`;
+    // Renderizador Dinâmico de Cartões de Voz
+    function renderVoices() {
+      const container = document.getElementById('voiceListContainer');
+      container.innerHTML = '';
+      
+      const filtered = voices.filter(v => v.gender === currentFilter);
+      
+      filtered.forEach(voice => {
+        const isSelected = voice.id === selectedVoiceId;
+        const card = document.createElement('div');
+        card.onclick = () => selectVoice(voice.id);
+        card.className = `p-3 rounded-xl border text-left cursor-pointer transition-all ${
+          isSelected 
+            ? 'bg-indigo-500/10 border-indigo-500 shadow-sm' 
+            : 'bg-slate-900/60 border-slate-800/80 hover:bg-slate-800/50'
+        }`;
         
-        // Payload adaptado para a API estável v1 usando o gemini-2.5-flash com output modalidade AUDIO
-        const payload = { 
-          contents: [{ 
-            parts: [
-              { text: instructionText ? `[Instruções de Narração: ${instructionText}] Ler o texto a seguir respeitando as instruções:` : '' },
-              { text: chunks[i] }
-            ] 
-          }], 
-          generationConfig: { 
-            responseModalities: ["AUDIO"], 
-            speechConfig: { 
-              voiceConfig: { 
-                prebuiltVoiceConfig: { 
-                  voiceName: selectedVoice 
-                } 
-              } 
-            } 
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold ${isSelected ? 'text-indigo-400' : 'text-slate-200'}">${voice.name}</span>
+            <div class="w-4 h-4 rounded-full border ${isSelected ? 'border-indigo-500 bg-indigo-500 flex items-center justify-center' : 'border-slate-700'}">
+              ${isSelected ? '<div class="w-1.5 h-1.5 bg-white rounded-full"></div>' : ''}
+            </div>
+          </div>
+          <p class="text-[10px] text-slate-500 mt-1">${voice.desc}</p>
+        `;
+        
+        container.appendChild(card);
+      });
+    }
+
+    function selectVoice(id) {
+      selectedVoiceId = id;
+      renderVoices();
+    }
+
+    // Presets Rápidos de Emoção
+    function setEmotionPreset(preset) {
+      const presets = {
+        animado: "Fale com muita animação, entusiasmo contagiante e energia lá no alto!",
+        sussurrado: "Fale de forma sussurrada, calma, acolhedora e com tom muito intimista.",
+        noticiario: "Adote um tom sério, jornalístico, extremamente formal e compassado.",
+        dramatico: "Diga com forte carga dramática, pausas intensas e tom tenso cinematográfico."
+      };
+      
+      document.getElementById('narrationInstructions').value = presets[preset];
+      showToast("Direção de arte atualizada!", "success");
+    }
+
+    // Gerador de Notificação customizada (Toast)
+    function showToast(message, type = "info") {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `p-4 rounded-xl shadow-lg border text-xs font-semibold flex items-center gap-2 transform translate-y-2 opacity-0 transition duration-300 pointer-events-auto ${
+        type === "success" ? "bg-slate-900 border-emerald-500 text-emerald-400" :
+        type === "error" ? "bg-slate-900 border-rose-500 text-rose-400" : "bg-slate-900 border-indigo-500 text-indigo-400"
+      }`;
+      
+      const icon = type === "success" ? "check-circle" : type === "error" ? "alert-triangle" : "info";
+      toast.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4"></i> <span>${message}</span>`;
+      
+      container.appendChild(toast);
+      lucide.createIcons();
+
+      // Trigger animation
+      setTimeout(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      }, 50);
+
+      // Dismiss
+      setTimeout(() => {
+        toast.classList.add('translate-y-2', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    // Auxiliares da Chave API
+    function getApiKey() {
+      const localInput = document.getElementById('apiKeyInput').value.trim();
+      if (localInput) return localInput;
+      const modalInput = document.getElementById('modalApiKeyInput').value.trim();
+      if (modalInput) return modalInput;
+      return fallbackApiKey;
+    }
+
+    function toggleSettingsModal() {
+      const modal = document.getElementById('settingsModal');
+      modal.classList.toggle('hidden');
+    }
+
+    function saveApiKey() {
+      const key = document.getElementById('modalApiKeyInput').value.trim();
+      if (!key) {
+        showToast("Por favor, digite uma chave válida.", "error");
+        return;
+      }
+      localStorage.setItem('gemini_custom_apikey', key);
+      document.getElementById('apiKeyInput').value = key;
+      showToast("Chave API salva localmente!", "success");
+      toggleSettingsModal();
+    }
+
+    function clearApiKey() {
+      localStorage.removeItem('gemini_custom_apikey');
+      document.getElementById('apiKeyInput').value = '';
+      document.getElementById('modalApiKeyInput').value = '';
+      showToast("Chave API removida.", "info");
+    }
+
+    // Auxiliar para Limpar o Roteiro
+    function clearText() {
+      document.getElementById('scriptText').value = '';
+      updateCharCount();
+    }
+
+    function updateCharCount() {
+      const text = document.getElementById('scriptText').value;
+      document.getElementById('charCounter').innerText = `${text.length} caracteres`;
+    }
+
+    // Utilitários de fatiamento de texto (Chunks) para suporte sem limites
+    function sliceTextIntoChunks(text, maxChars = 300) {
+      if (text.length <= maxChars) return [text];
+      
+      // Divide primariamente por quebra de linha ou pontos finais para não cortar frases ao meio
+      const sentences = text.match(/[^.!?\n]+[.!?\n]+|[^.!?\n]+/g) || [text];
+      const chunks = [];
+      let currentChunk = "";
+      
+      for (const sentence of sentences) {
+        if ((currentChunk + sentence).length > maxChars) {
+          if (currentChunk.trim()) {
+            chunks.push(currentChunk.trim());
+          }
+          currentChunk = sentence;
+        } else {
+          currentChunk += sentence;
+        }
+      }
+      if (currentChunk.trim()) {
+        chunks.push(currentChunk.trim());
+      }
+      return chunks;
+    }
+
+    // Fazer requisição com Backoff Exponencial robusto de até 5 tentativas
+    async function fetchWithRetry(url, payload, retries = 5, delay = 1000) {
+      for (let i = 0; i < retries; i++) {
+        try {
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          
+          if (response.ok) {
+            return await response.json();
+          }
+          
+          if (response.status === 429) {
+            // Limite de taxa, forçar espera mais longa
+            await new Promise(resolve => setTimeout(resolve, delay));
+            delay *= 2;
+            continue;
+          }
+        } catch (error) {
+          if (i === retries - 1) throw error;
+        }
+        await new Promise(resolve => setTimeout(resolve, delay));
+        delay *= 2;
+      }
+      throw new Error("Falha na API após várias tentativas de reenvio.");
+    }
+
+    // Testar Voz com frase curta padronizada
+    async function testSelectedVoice() {
+      const key = getApiKey();
+      const testBtn = document.getElementById('btnTestVoice');
+      const originalText = testBtn.innerHTML;
+      
+      testBtn.disabled = true;
+      testBtn.innerHTML = `<span class="animate-spin mr-2">🔄</span> Conectando...`;
+      
+      try {
+        const textToSay = "Olá! Esta é uma demonstração da qualidade da minha voz no ambiente estúdio.";
+        const payload = {
+          contents: [{ parts: [{ text: textToSay }] }],
+          generationConfig: {
+            responseModalities: ["AUDIO"],
+            speechConfig: {
+              voiceConfig: {
+                prebuiltVoiceConfig: {
+                  voiceName: selectedVoiceId
+                }
+              }
+            }
           }
         };
 
-        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
-        const res = await fetchWithRetry(url, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-        const data = await res.json();
-        
-        // Estrutura padrão de retorno para dados inline de áudio
-        const audioData = data?.candidates?.[0]?.content?.parts?.[1]?.inlineData?.data || data?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-        if (!audioData) {
-          throw new Error('A API não retornou os dados de áudio esperados. Verifique se o modelo está aceitando requisições de áudio com a sua chave.');
+        const response = await fetchWithRetry(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${key}`,
+          payload
+        );
+
+        const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+        if (!base64Audio) {
+          throw new Error("Resposta de áudio vazia. Verifique sua chave de API.");
         }
-        pcmParts.push(base64ToUint8Array(audioData));
+
+        const pcmBuffer = base64ToBuffer(base64Audio);
+        const wavBlob = createWavFile([pcmBuffer], 24000);
+        const audioUrl = URL.createObjectURL(wavBlob);
+
+        const player = document.getElementById('audioPlayer');
+        player.src = audioUrl;
+        player.play();
+        
+        showToast("Demonstração carregada!", "success");
+      } catch (err) {
+        console.error(err);
+        showToast("Erro ao testar voz: " + err.message, "error");
+      } finally {
+        testBtn.disabled = false;
+        testBtn.innerHTML = originalText;
       }
-      statusText.textContent = 'Unindo fragmentos...';
-      const totalLen = pcmParts.reduce((a,b)=>a+b.length,0);
-      const merged = new Uint8Array(totalLen);
-      let off=0; pcmParts.forEach(p=>{ merged.set(p, off); off+=p.length; });
-      const wav = pcmToWav(merged, 24000);
-      statusText.textContent = 'Codificando arquivo final em MP3...';
-      const mp3 = await convertWavToMp3(wav);
-      currentMp3Blob = mp3;
-      const mp3Url = URL.createObjectURL(mp3);
-      audioPlayer.src = mp3Url;
-      audioSection.classList.remove('hidden');
-      statusBox.classList.add('hidden');
-    } catch (err) {
-      console.error(err);
-      showError(err.message || 'Falha ao gerar áudio.');
-    } finally {
-      setGenerating(false);
     }
-  }
 
-  playBtn.addEventListener('click', () => {
-    if (!audioPlayer.src) return;
-    if (audioPlayer.paused) audioPlayer.play(); else audioPlayer.pause();
-  });
-  audioPlayer.addEventListener('play', () => { playIcon.classList.add('hidden'); pauseIcon.classList.remove('hidden'); });
-  audioPlayer.addEventListener('pause', () => { playIcon.classList.remove('hidden'); pauseIcon.classList.add('hidden'); });
-  audioPlayer.addEventListener('ended', () => { playIcon.classList.remove('hidden'); pauseIcon.classList.add('hidden'); });
+    // Função de Geração de Narração Principal
+    async function generateSpeech() {
+      const text = document.getElementById('scriptText').value.trim();
+      const directions = document.getElementById('narrationInstructions').value.trim();
+      const key = getApiKey();
+      
+      if (!text) {
+        showToast("Por favor, insira o roteiro que deseja narrar.", "error");
+        return;
+      }
 
-  downloadBtn.addEventListener('click', () => {
-    if (!currentMp3Blob) return;
-    const a = document.createElement('a');
-    a.href = audioPlayer.src;
-    const ts = new Date().toISOString().replace(/[:.]/g,'-');
-    a.download = `Gemini_Studio_${selectedVoice}_${ts}.mp3`;
-    a.click();
-  });
+      // Configurar Overlay de Progresso
+      const overlay = document.getElementById('loadingOverlay');
+      const progBar = document.getElementById('loadingProgress');
+      const progPercent = document.getElementById('loadingPercent');
+      const loadingText = document.getElementById('loadingText');
+      
+      overlay.classList.remove('hidden');
+      progBar.style.width = '0%';
+      progPercent.innerText = '0%';
+
+      // Fatiar o texto longo em blocos gerenciáveis de ~250 caracteres
+      const chunks = sliceTextIntoChunks(text, 250);
+      const totalChunks = chunks.length;
+      const audioBuffersList = [];
+
+      try {
+        for (let idx = 0; idx < totalChunks; idx++) {
+          const currentProgress = Math.round((idx / totalChunks) * 100);
+          progBar.style.width = `${currentProgress}%`;
+          progPercent.innerText = `${currentProgress}%`;
+          loadingText.innerText = `Processando bloco ${idx + 1} de ${totalChunks}...`;
+
+          // Concatenar direções de arte se existirem
+          const promptText = directions 
+            ? `Diga com a seguinte entonação [${directions}]: ${chunks[idx]}` 
+            : chunks[idx];
+
+          const payload = {
+            contents: [{ parts: [{ text: promptText }] }],
+            generationConfig: {
+              responseModalities: ["AUDIO"],
+              speechConfig: {
+                voiceConfig: {
+                  prebuiltVoiceConfig: {
+                    voiceName: selectedVoiceId
+                  }
+                }
+              }
+            }
+          };
+
+          const response = await fetchWithRetry(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${key}`,
+            payload
+          );
+
+          const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+          if (!base64Audio) {
+            throw new Error(`Dados de áudio vazios no bloco ${idx + 1}`);
+          }
+
+          const rawBuffer = base64ToBuffer(base64Audio);
+          audioBuffersList.push(rawBuffer);
+        }
+
+        // Finalizar barra de progresso
+        progBar.style.width = '100%';
+        progPercent.innerText = '100%';
+        loadingText.innerText = `Compilando trilhas em alta definição...`;
+
+        // Gerar WAV completo mesclado
+        const wavBlob = createWavFile(audioBuffersList, 24000);
+        const audioUrl = URL.createObjectURL(wavBlob);
+
+        // Configurar reporout e downloads
+        const player = document.getElementById('audioPlayer');
+        player.src = audioUrl;
+
+        // Liberar visualizador do player
+        document.getElementById('audioOutputCard').classList.remove('hidden');
+        document.getElementById('downloadBtn').href = audioUrl;
+        
+        // Atualizar informações de arquivo e duração ao carregar
+        player.onloadedmetadata = () => {
+          const mins = Math.floor(player.duration / 60).toString().padStart(2, '0');
+          const secs = Math.floor(player.duration % 60).toString().padStart(2, '0');
+          document.getElementById('audioDuration').innerText = `${mins}:${secs}`;
+        };
+
+        // Rolar até o player
+        document.getElementById('audioOutputCard').scrollIntoView({ behavior: 'smooth' });
+        showToast("Áudio completo gerado!", "success");
+
+        // Preparar Analisador de Áudio para o Visualizador
+        setupVisualizer(player);
+
+      } catch (err) {
+        console.error(err);
+        showToast("Falha na síntese do áudio: " + err.message, "error");
+      } finally {
+        overlay.classList.add('hidden');
+      }
+    }
+
+    // Auxiliares de Tratamento de Áudio
+    function base64ToBuffer(base64) {
+      const binaryString = window.atob(base64);
+      const len = binaryString.length;
+      const bytes = new Uint8Array(len);
+      for (let i = 0; i < len; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      return bytes.buffer;
+    }
+
+    // Conversão direta de PCM para WAV de Estúdio de 24kHz
+    function createWavFile(pcmBuffers, sampleRate = 24000) {
+      let totalLength = 0;
+      pcmBuffers.forEach(buf => totalLength += buf.byteLength);
+      
+      const mergedPcm = new Uint8Array(totalLength);
+      let offset = 0;
+      pcmBuffers.forEach(buf => {
+        mergedPcm.set(new Uint8Array(buf), offset);
+        offset += buf.byteLength;
+      });
+
+      const buffer = new ArrayBuffer(44 + totalLength);
+      const view = new DataView(buffer);
+
+      writeString(view, 0, 'RIFF');
+      view.setUint32(4, 36 + totalLength, true);
+      writeString(view, 8, 'WAVE');
+      writeString(view, 12, 'fmt ');
+      view.setUint32(16, 16, true);
+      view.setUint16(20, 1, true); // Linear PCM
+      view.setUint16(22, 1, true); // Mono canal
+      view.setUint32(24, sampleRate, true);
+      view.setUint32(28, sampleRate * 2, true);
+      view.setUint16(32, 2, true); // Block Align
+      view.setUint16(34, 16, true); // 16 Bits por sample
+      writeString(view, 36, 'data');
+      view.setUint32(40, totalLength, true);
+
+      const pcmData = new Uint8Array(buffer, 44);
+      pcmData.set(mergedPcm);
+
+      return new Blob([buffer], { type: 'audio/wav' });
+    }
+
+    function writeString(view, offset, string) {
+      for (let i = 0; i < string.length; i++) {
+        view.setUint8(offset + i, string.charCodeAt(i));
+      }
+    }
+
+    // Player customizado e controle de Waveform
+    function togglePlay() {
+      const player = document.getElementById('audioPlayer');
+      const icon = document.getElementById('playIcon');
+      
+      if (player.paused) {
+        player.play();
+        icon.setAttribute('data-lucide', 'pause');
+      } else {
+        player.pause();
+        icon.setAttribute('data-lucide', 'play');
+      }
+      lucide.createIcons();
+    }
+
+    // Configuração do Visualizador de Ondas Sonoras Dinâmico
+    function setupVisualizer(audioElement) {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+
+      const canvas = document.getElementById('waveformCanvas');
+      const ctx = canvas.getContext('2d');
+      
+      // Resolução correta
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = canvas.parentElement.clientHeight;
+
+      const source = audioContext.createMediaElementSource(audioElement);
+      const analyser = audioContext.createAnalyser();
+      
+      analyser.fftSize = 64;
+      source.connect(analyser);
+      analyser.connect(audioContext.destination);
+
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+
+      function draw() {
+        canvasAnimationId = requestAnimationFrame(draw);
+        analyser.getByteFrequencyData(dataArray);
+
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.4)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const barWidth = (canvas.width / bufferLength) * 1.5;
+        let barHeight;
+        let x = 0;
+
+        for (let i = 0; i < bufferLength; i++) {
+          barHeight = dataArray[i] / 2.5;
+
+          // Desenha barra dupla espelhada para estética premium
+          ctx.fillStyle = `rgba(99, 102, 241, ${0.3 + (barHeight / 100)})`;
+          ctx.fillRect(x, (canvas.height / 2) - (barHeight / 2), barWidth - 2, barHeight);
+
+          x += barWidth;
+        }
+      }
+
+      if (canvasAnimationId) {
+        cancelAnimationFrame(canvasAnimationId);
+      }
+      
+      // Retomar AudioContext se estiver suspenso
+      audioElement.onplay = () => {
+        if (audioContext.state === 'suspended') {
+          audioContext.resume();
+        }
+      };
+
+      draw();
+    }
   </script>
 </body>
 </html>
